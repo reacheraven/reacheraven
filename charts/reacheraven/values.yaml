@@ -1,0 +1,39 @@
+image:
+  tag: v0.1.0
+
+components:
+  web:
+    image: reacheraven/reacheraven-web
+    port: 3000
+
+  api:
+    image: reacheraven/reacheraven-api
+    port: 8080
+
+  cron:
+    image: reacheraven/reacheraven-cron
+    port: 8081
+
+  sender:
+    image: reacheraven/reacheraven-sender
+    port: 8082
+
+# === DATABASE & BROKERS ===
+
+postgresql:
+  enabled: true
+  auth:
+    postgresPassword: changeme
+    database: reacheraven
+
+redis:
+  enabled: true
+  auth:
+    enabled: false
+
+rabbitmq:
+  enabled: true
+  auth:
+    username: user
+    password: bitnami
+    vhost: "/"

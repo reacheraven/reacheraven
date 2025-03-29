@@ -1,0 +1,33 @@
+name: publish-helm-chart
+on:
+  push:
+    paths:
+      - 'charts/**'
+      - 'Chart.yaml'
+permissions:
+  contents: write
+
+jobs:
+  release-chart:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Helm 
+        uses: azure/setup-helm@v3
+        with:
+          version: v3.11.2
+
+      - name: Configure Git (package metadata) 
+        run: |
+          git config user.name "automate"
+          git config user.email "automate@reacheraven.io"
+
+      - name: Run chart-releaser
+        uses: helm/chart-releaser-action@v1.6.0
+        env:
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          CR_PAGES_BRANCH: "main"
