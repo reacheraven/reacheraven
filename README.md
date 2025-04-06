@@ -52,12 +52,12 @@ Docker Compose is the simplest way to test or develop Reacheraven. This method s
 | Variable                | Description                                                      | Example / Default                                                          |
 |-------------------------|------------------------------------------------------------------|----------------------------------------------------------------------------|
 | `PORT`                  | Port on which the application container (API/Scheduler) listens  | `"8080"` / `"8081"`                                                        |
-| `POSTGRES_URL`          | PostgreSQL connection string                                    | `postgres://postgres:changeme@postgres:5432/reacheraven?sslmode=disable`   |
-| `REDIS_URL`             | Redis connection string                                         | `redis://redis:6379`                                                       |
+| `POSTGRES_URL`          | PostgreSQL connection string                                    | `postgres://user:pass@host:5432/db`   |
+| `REDIS_URL`             | Redis connection string                                         | `redis://host:6379`                                                       |
 | `JWT_SECRET`            | Secret key for signing JWT tokens *(sensitive)*                 | `my_secret_key`                                                            |
 | `JWT_EXPIRATION_HOURS`  | Expiration time (in hours) for JWT tokens                       | `24`                                                                       |
 | `TZ`                    | Timezone for the Scheduler                                      | `America/Sao_Paulo`                                                        |
-| `RABBITMQ_URL`          | RabbitMQ connection string *(sensitive)*                        | `amqp://user:bitnami@rabbitmq:5672`                                        |
+| `RABBITMQ_URL`          | RabbitMQ connection string *(sensitive)*                        | `amqp://user:pass@host:5672`                                        |
 
 Adjust these sensitive values (passwords, secret keys) for your production or staging environments.
 
@@ -173,8 +173,8 @@ Below is a summary of key parameters in the chart’s default `values.yaml`:
 | `api.tag`                           | API image version                                                                  | `v1.0.8`                                                                  |
 | `api.port`                          | Container port for the API                                                         | `8080`                                                                    |
 | `api.env.PORT`                      | Application port for the API                                                       | `"8080"`                                                                  |
-| `api.env.POSTGRES_URL`              | PostgreSQL connection URL *(sensitive)*                                            | `postgres://postgres:changeme@postgres:5432/reacheraven?sslmode=disable`  |
-| `api.env.REDIS_URL`                 | Redis connection URL                                                               | `redis://redis:6379`                                                      |
+| `api.env.POSTGRES_URL`              | PostgreSQL connection URL *(sensitive)*                                            | `postgres://user:pass@host:5432/db`  |
+| `api.env.REDIS_URL`                 | Redis connection URL                                                               | `redis://host:6379`                                                      |
 | `api.env.JWT_SECRET`                | JWT secret *(sensitive)*                                                           | `my_secret_key`                                                           |
 | `api.env.JWT_EXPIRATION_HOURS`      | JWT token expiration (hours)                                                       | `"24"`                                                                    |
 | `api.service.type`                  | Kubernetes Service type for the API                                                | `ClusterIP`                                                               |
@@ -184,15 +184,15 @@ Below is a summary of key parameters in the chart’s default `values.yaml`:
 | `scheduler.port`                    | Container port for the Scheduler                                                   | `8081`                                                                    |
 | `scheduler.env.TZ`                  | Timezone for the Scheduler                                                         | `America/Sao_Paulo`                                                       |
 | `scheduler.env.PORT`                | Scheduler application port                                                         | `"8081"`                                                                  |
-| `scheduler.env.POSTGRES_URL`        | PostgreSQL connection URL for the Scheduler                                        | `postgres://postgres:changeme@postgres:5432/reacheraven?sslmode=disable`  |
-| `scheduler.env.REDIS_URL`           | Redis connection URL for the Scheduler                                             | `redis://redis:6379`                                                      |
-| `scheduler.env.RABBITMQ_URL`        | RabbitMQ connection URL *(sensitive)*                                              | `amqp://user:bitnami@rabbitmq:5672`                                       |
+| `scheduler.env.POSTGRES_URL`        | PostgreSQL connection URL for the Scheduler                                        | `postgres://user:pass@host:5432/db`  |
+| `scheduler.env.REDIS_URL`           | Redis connection URL for the Scheduler                                             | `redis://host:6379`                                                      |
+| `scheduler.env.RABBITMQ_URL`        | RabbitMQ connection URL *(sensitive)*                                              | `amqp://user:pass@host:5672`                                       |
 | `scheduler.service.type`            | Kubernetes Service type for the Scheduler                                          | `ClusterIP`                                                               |
 | `scheduler.service.port`            | Kubernetes Service port for the Scheduler                                          | `8081`                                                                    |
 | `notifier.image`                    | Docker image for the Notifier                                                      | `reacheraven/reacheraven-notifier`                                        |
 | `notifier.tag`                      | Notifier image version                                                             | `v1.0.1`                                                                  |
-| `notifier.env.POSTGRES_URL`         | PostgreSQL connection URL for the Notifier *(sensitive)*                           | `postgres://postgres:changeme@postgres:5432/reacheraven?sslmode=disable`  |
-| `notifier.env.RABBITMQ_URL`         | RabbitMQ connection URL for the Notifier *(sensitive)*                             | `amqp://user:bitnami@rabbitmq:5672`                                       |
+| `notifier.env.POSTGRES_URL`         | PostgreSQL connection URL for the Notifier *(sensitive)*                           | `postgres://user:pass@host:5432/db`  |
+| `notifier.env.RABBITMQ_URL`         | RabbitMQ connection URL for the Notifier *(sensitive)*                             | `amqp://user:pass@host:5672`                                       |
 | `notifier.service.type`             | Kubernetes Service type for the Notifier                                           | `ClusterIP`                                                               |
 | `notifier.service.port`             | Kubernetes Service port for the Notifier                                           | `80`                                                                      |
 | `postgresql.enabled`                | If `true`, installs PostgreSQL via Bitnami chart                                   | `true`                                                                    |
