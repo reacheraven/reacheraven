@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "reacheraven.fullname" . }}-scheduler
+  labels:
+    app: {{ include "reacheraven.name" . }}
+    component: scheduler
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "reacheraven.name" . }}
+      component: scheduler
+  template:
+    metadata:
+      labels:
+        app: {{ include "reacheraven.name" . }}
+        component: scheduler
+    spec:
+      containers:
+        - name: scheduler
+          image: "{{ .Values.scheduler.image }}:{{ .Values.scheduler.tag }}"
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "reacheraven.fullname" . }}-scheduler-config
+            - secretRef:
+                name: {{ include "reacheraven.fullname" . }}-scheduler-secret
+          ports:
+            - containerPort: {{ .Values.scheduler.port }}

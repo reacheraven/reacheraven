@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "reacheraven.fullname" . }}-api
+  labels:
+    app: {{ include "reacheraven.name" . }}
+    component: api
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "reacheraven.name" . }}
+      component: api
+  template:
+    metadata:
+      labels:
+        app: {{ include "reacheraven.name" . }}
+        component: api
+    spec:
+      containers:
+        - name: api
+          image: "{{ .Values.api.image }}:{{ .Values.api.tag }}"
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "reacheraven.fullname" . }}-api-config
+            - secretRef:
+                name: {{ include "reacheraven.fullname" . }}-api-secret
+          ports:
+            - containerPort: {{ .Values.api.port }}

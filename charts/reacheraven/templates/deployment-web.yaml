@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "reacheraven.fullname" . }}-web
+  labels:
+    app: {{ include "reacheraven.name" . }}
+    component: web
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "reacheraven.name" . }}
+      component: web
+  template:
+    metadata:
+      labels:
+        app: {{ include "reacheraven.name" . }}
+        component: web
+    spec:
+      containers:
+        - name: web
+          image: "{{ .Values.web.image }}:{{ .Values.web.tag }}"
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "reacheraven.fullname" . }}-web-config
+          ports:
+            - containerPort: {{ .Values.web.port }}

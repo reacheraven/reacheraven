@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "reacheraven.fullname" . }}-notifier
+  labels:
+    app: {{ include "reacheraven.name" . }}
+    component: notifier
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "reacheraven.name" . }}
+      component: notifier
+  template:
+    metadata:
+      labels:
+        app: {{ include "reacheraven.name" . }}
+        component: notifier
+    spec:
+      containers:
+        - name: notifier
+          image: "{{ .Values.notifier.image }}:{{ .Values.notifier.tag }}"
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          envFrom:
+            - secretRef:
+                name: {{ include "reacheraven.fullname" . }}-notifier-secret
+          ports:
+            - containerPort: {{ .Values.notifier.service.port }}
