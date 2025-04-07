@@ -116,36 +116,34 @@ You can override any defaults using your own `values.yaml` or `--set` flags. For
 
 ```bash
 helm install reacheraven reacheraven/reacheraven \
-  --set postgresql.enabled=false \
-  --set redis.enabled=false \
-  --set rabbitmq.enabled=false \
-  --set api.env.POSTGRES_URL="postgres://user:pass@host:5432/db" \
-  --set api.env.REDIS_URL="redis://host:6379" \
-  --set scheduler.env.RABBITMQ_URL="amqp://user:pass@host:5672"
+  --set reacheraven.dependencies.postgresql.install=false \
+  --set reacheraven.dependencies.redis.install=false \
+  --set reacheraven.dependencies.rabbitmq.install=false \
+  --set reacheraven.dependencies.postgresql.connectionString="postgresql://user:pass@host:5432/db" \
+  --set reacheraven.dependencies.redis.connectionString="redis://user:pass@host:6379" \
+  --set reacheraven.dependencies.rabbitmq.connectionString="amqp://user:pass@host:5672"
 ```
 
-You can also customize image tags, environment variables, service types, replica counts, and more.
+You can also customize image tags, environment variables, service types, replica counts, and more by editing the `reacheraven` section.
 
-> **Tip**: For critical environments, store sensitive parameters (like passwords) in Kubernetes Secrets and reference them in Helm via `envFrom.secretRef`.
+> **Tip**: For production environments, sensitive parameters (like credentials and connection strings) should be stored in Kubernetes Secrets and referenced using `envFrom.secretRef`.
 
 #### Example Override via `values.yaml`
 
 Create a file named `my-values.yaml`:
 
 ```yaml
-api:
-  env:
-    JWT_SECRET: "someSuperSecret123"
-    POSTGRES_URL: "postgres://postgres:strongPassword@custom-postgres:5432/reacheraven?sslmode=disable"
-
-postgresql:
-  enabled: false
-
-redis:
-  enabled: false
-
-rabbitmq:
-  enabled: false
+reacheraven:
+  dependencies:
+    postgresql:
+      install: false
+      connectionString: "postgresql://postgres:strongPassword@custom-postgres:5432/reacheraven?sslmode=disable"
+    redis:
+      install: false
+      connectionString: "redis://default:securePass@external-redis:6379"
+    rabbitmq:
+      install: false
+      connectionString: "amqp://user:securePass@external-rabbitmq:5672/"
 ```
 
 Then run:
@@ -153,7 +151,6 @@ Then run:
 ```bash
 helm install reacheraven reacheraven/reacheraven -f my-values.yaml
 ```
-
 ---
 
 ## Helm Chart Configuration Parameters
