@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ include "reacheraven.fullname" . }}-api-config
-data:
-  PORT: "{{ .Values.api.env.PORT }}"
-  POSTGRES_URL: "{{ .Values.api.env.POSTGRES_URL }}"
-  REDIS_URL: "{{ .Values.api.env.REDIS_URL }}"
-  JWT_EXPIRATION_HOURS: "{{ .Values.api.env.JWT_EXPIRATION_HOURS }}"

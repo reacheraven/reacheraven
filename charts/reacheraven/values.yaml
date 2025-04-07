@@ -1,180 +1,189 @@
-# Default values for the Reacheraven Helm chart.
-# This file is YAML-formatted and defines variables to be passed into your templates.
-# The values file follows Helm best practices, where variable names use camelCase and each
-# property is documented with a one-sentence description.
+#######################################
+# Global Configuration
+#######################################
+global:
+  # Uncomment and customize the example below to set custom node affinity rules.
+  # affinity:
+  #   nodeAffinity:
+  #     requiredDuringSchedulingIgnoredDuringExecution:
+  #       nodeSelectorTerms:
+  #         - matchExpressions:
+  #             - key: "kubernetes.io/e2e-az-name"
+  #               operator: In
+  #               values:
+  #                 - "e2e-az1"
+  #                 - "e2e-az2"
+  affinity: {}
+
+  # Uncomment and customize the example below to add node tolerations.
+  # tolerations:
+  #   - key: "key1"
+  #     operator: "Equal"
+  #     value: "value1"
+  tolerations: []
+
+  nodeSelector: {}
+  # Uncomment and customize the example below to set custom node selectors.
+  # nodeSelector:
+  #   disktype: ssd
+  #   region: us-west-1
+  #   zone: us-west-1a
+  # nodeSelector: {}
+
+  # Determines when container images are pulled.
+  # "IfNotPresent" will use the local image if available.
+  imagePullPolicy: "IfNotPresent"
+
+  # Default timezone for the application.
+  timezone: "UTC"
 
 #######################################
-# Global Settings
+# Reacheraven Application Configuration
 #######################################
-# [replicaCount] defines the number of replicas for each deployment.
-replicaCount: 1
+reacheraven:
+  # Web (Frontend) Configuration
+  web:
+    image: "reacheraven/reacheraven-web"
+    tag: "v1.0.14"
+    replicas: 1  # Number of instances for the web frontend.
+    service:
+      # ClusterIP exposes the service internally within the cluster.
+      type: ClusterIP
 
-# [imagePullPolicy] defines the Docker image pull policy for all deployments.
-imagePullPolicy: IfNotPresent
+  # API Service Configuration
+  api:
+    image: "reacheraven/reacheraven-api"
+    tag: "v1.0.8"
+    replicas: 2  # Number of instances for the API service.
+    service:
+      type: ClusterIP
 
-#######################################
-# Web Service Configuration
-#######################################
-web:
-  # [web.image] defines the Docker image repository for the Web service.
-  image: "reacheraven/reacheraven-web"
-  # [web.tag] defines the Docker image tag/version for the Web service.
-  tag: "v1.0.14"
-  # [web.port] defines the container port on which the Web service runs.
-  port: 3000
-  service:
-    # [web.service.type] specifies the type of Kubernetes service (e.g., ClusterIP).
-    type: ClusterIP
-    # [web.service.port] defines the port that the Web service will be exposed on.
-    port: 3000
+  # Scheduler Service Configuration
+  scheduler:
+    image: "reacheraven/reacheraven-scheduler"
+    tag: "v1.0.1"
+    replicas: 1  # Number of scheduler instances; typically one is sufficient.
+    service:
+      type: ClusterIP
 
-#######################################
-# API Service Configuration
-#######################################
-api:
-  # [api.image] defines the Docker image repository for the API service.
-  image: "reacheraven/reacheraven-api"
-  # [api.tag] defines the Docker image tag/version for the API service.
-  tag: "v1.0.8"
-  # [api.port] defines the container port for the API service.
-  port: 8080
-  env:
-    # [api.env.PORT] defines the port number used by the API application.
-    PORT: "8080"
-    # [api.env.POSTGRES_URL] defines the PostgreSQL connection URL.
-    POSTGRES_URL: "postgres://postgres:changeme@postgres:5432/reacheraven?sslmode=disable"
-    # [api.env.REDIS_URL] defines the Redis connection URL.
-    REDIS_URL: "redis://redis:6379"
-    # [api.env.JWT_SECRET] is a sensitive JWT secret key (should be stored in a Secret).
-    JWT_SECRET: "my_secret_key"
-    # [api.env.JWT_EXPIRATION_HOURS] defines the expiration time (in hours) for JWT tokens.
-    JWT_EXPIRATION_HOURS: "24"
-  service:
-    # [api.service.type] defines the type of Kubernetes service for the API.
-    type: ClusterIP
-    # [api.service.port] specifies the external port for the API service.
-    port: 8080
+  # Notifier Service Configuration
+  notifier:
+    image: "reacheraven/reacheraven-notifier"
+    tag: "v1.0.1"
+    replicas: 1  # Number of notifier instances.
+    service:
+      type: ClusterIP
 
-#######################################
-# Scheduler Service Configuration
-#######################################
-scheduler:
-  # [scheduler.image] defines the Docker image repository for the Scheduler service.
-  image: "reacheraven/reacheraven-scheduler"
-  # [scheduler.tag] defines the Docker image tag/version for the Scheduler.
-  tag: "v1.0.1"
-  # [scheduler.port] defines the container port for the Scheduler.
-  port: 8081
-  env:
-    # [scheduler.env.TZ] sets the timezone for the Scheduler.
-    TZ: "America/Sao_Paulo"
-    # [scheduler.env.PORT] defines the port number used by the Scheduler application.
-    PORT: "8081"
-    # [scheduler.env.POSTGRES_URL] defines the PostgreSQL connection URL for the Scheduler.
-    POSTGRES_URL: "postgres://postgres:changeme@postgres:5432/reacheraven?sslmode=disable"
-    # [scheduler.env.REDIS_URL] defines the Redis connection URL for the Scheduler.
-    REDIS_URL: "redis://redis:6379"
-    # [scheduler.env.RABBITMQ_URL] defines the RabbitMQ connection URL (sensitive; to be stored in a Secret).
-    RABBITMQ_URL: "amqp://user:bitnami@rabbitmq:5672"
-  service:
-    # [scheduler.service.type] specifies the type of Kubernetes service for the Scheduler.
-    type: ClusterIP
-    # [scheduler.service.port] defines the external port for the Scheduler service.
-    port: 8081
+  dependencies:
+    # The dependencies section allows you to configure the subcharts for PostgreSQL,
+    # Redis, and RabbitMQ. These are optional components that can be installed
 
-#######################################
-# Notifier Service Configuration
-#######################################
-notifier:
-  # [notifier.image] defines the Docker image repository for the Notifier service.
-  image: "reacheraven/reacheraven-notifier"
-  # [notifier.tag] defines the Docker image tag/version for the Notifier.
-  tag: "v1.0.1"
-  env:
-    # [notifier.env.POSTGRES_URL] defines the PostgreSQL connection URL for the Notifier (sensitive).
-    POSTGRES_URL: "postgres://postgres:changeme@postgres:5432/reacheraven?sslmode=disable"
-    # [notifier.env.RABBITMQ_URL] defines the RabbitMQ connection URL for the Notifier (sensitive).
-    RABBITMQ_URL: "amqp://user:bitnami@rabbitmq:5672"
-  service:
-    # [notifier.service.type] defines the type of Kubernetes service for the Notifier.
-    type: ClusterIP
-    # [notifier.service.port] specifies the external port for the Notifier service.
-    port: 80
-
-#######################################
-# Dependency Configuration
-#######################################
-
-# PostgreSQL Configuration (via Bitnami chart)
-postgresql:
-  # [postgresql.enabled] if true, deploy PostgreSQL as a dependency.
-  enabled: true
-  global:
     postgresql:
-      auth:
-        # [postgresql.global.postgresql.auth.username] specifies the PostgreSQL username.
-        username: "postgres"
-        # [postgresql.global.postgresql.auth.password] specifies the PostgreSQL password.
-        password: "changeme"
-        # [postgresql.global.postgresql.auth.database] specifies the name of the PostgreSQL database.
-        database: "reacheraven"
-  persistence:
-    # [postgresql.persistence.enabled] enables persistent storage for PostgreSQL.
-    enabled: true
-    # [postgresql.persistence.storageClass] specifies the storage class (empty uses the default).
-    storageClass: ""
-    # [postgresql.persistence.accessModes] defines the access mode for the volume.
-    accessModes:
-      - ReadWriteOnce
-    # [postgresql.persistence.size] defines the size of the persistent volume.
-    size: 8Gi
+      # The connection string for PostgreSQL should be stored as a Kubernetes Secret
+      # to avoid exposing sensitive data. This value should be set during the Helm
+      # installation using a Secret and referenced here.
+      connectionString: "postgresql://postgres:changeme@reacheraven-postgresql-hl:5432/reacheraven?sslmode=disable"
+      # If true, installs the Bitnami PostgreSQL subchart.
+      install: true
 
-# Redis Configuration (via Bitnami chart)
+    redis:
+      # The connection string for Redis should be stored as a Kubernetes Secret
+      # to avoid exposing sensitive data. This value should be set during the Helm
+      # installation using a Secret and referenced here.
+      connectionString: "redis://default:changeme@reacheraven-redis-headless:6379"
+      # If "install" is true, the Bitnami Redis chart is deployed.
+      install: true
+
+    rabbitmq:
+      # The connection string for RabbitMQ should be stored as a Kubernetes Secret
+      # to avoid exposing sensitive data. This value should be set during the Helm
+      # installation using a Secret and referenced here.
+      connectionString: "amqp://user:changeme@reacheraven-rabbitmq-headless:5672/"
+      # If true, installs the Bitnami RabbitMQ subchart.
+      install: true
+
+
+
+
+#######################################
+# PostgreSQL Configuration
+#######################################
+
+postgresql:
+
+  # --- Bitnami PostgreSQL Subchart Settings ---
+  # Reference: https://artifacthub.io/packages/helm/bitnami/postgresql
+
+  auth:
+    # The username for the PostgreSQL user.
+    username: "postgres"
+    # The password for the PostgreSQL user. This should be set as a Kubernetes Secret
+    # to avoid exposing sensitive data. This value should be set during the Helm
+    # installation using a Secret and referenced here.
+    password: "changeme"
+    # The database name to be created in PostgreSQL.
+    database: "reacheraven"
+  primary:
+    persistence:
+      enabled: true
+      # Suggested minimal size for initial production usage:
+      size: 5Gi
+  # Additional fields (e.g., resources, metrics, networkPolicy) can be placed here.
+
+
+#######################################
+# Redis Configuration
+#######################################
+
 redis:
-  # [redis.enabled] if true, deploy Redis as a dependency.
-  enabled: true
-  auth:
-    # [redis.auth.enabled] if true, enables Redis authentication.
-    enabled: false
-  persistence:
-    # [redis.persistence.enabled] enables persistent storage for Redis.
-    enabled: true
-    storageClass: ""
-    accessModes:
-      - ReadWriteOnce
-    # [redis.persistence.size] defines the size of the persistent volume for Redis.
-    size: 2Gi
 
-# RabbitMQ Configuration (via Bitnami chart)
+  # --- Bitnami Redis Subchart Settings ---
+  # Single-instance mode (no cluster/replication).
+  # Reference: https://artifacthub.io/packages/helm/bitnami/redis
+
+  architecture: "standalone"
+
+  auth:
+    # The username for the Redis user.
+    username: "default"
+    # The password for the Redis user. This should be set as a Kubernetes Secret
+    # to avoid exposing sensitive data. This value should be set during the Helm
+    # installation using a Secret and referenced here.
+    password: "changeme"
+
+  master:
+    persistence:
+      enabled: true
+      # Suggested disk size for a single-instance Redis:
+      size: 2Gi
+    extraEnvVars:
+      - name: ALLOW_EMPTY_PASSWORD
+        value: "no"
+
+  # Additional fields (e.g., resources, metrics, networkPolicy) can be placed here.
+
+
+#######################################
+# RabbitMQ Configuration
+#######################################
 rabbitmq:
-  # [rabbitmq.enabled] if true, deploy RabbitMQ as a dependency.
-  enabled: true
-  auth:
-    # [rabbitmq.auth.username] defines the RabbitMQ username.
-    username: "user"
-    # [rabbitmq.auth.password] defines the RabbitMQ password.
-    password: "bitnami"
-  persistence:
-    # [rabbitmq.persistence.enabled] enables persistent storage for RabbitMQ.
-    enabled: true
-    storageClass: ""
-    accessModes:
-      - ReadWriteOnce
-    # [rabbitmq.persistence.size] defines the size of the persistent volume for RabbitMQ.
-    size: 2Gi
 
-#######################################
-# Ingress Configuration (Optional)
-#######################################
-ingress:
-  # [ingress.enabled] if true, an Ingress resource will be created.
-  enabled: false
-  # [ingress.annotations] provides additional annotations for the Ingress resource.
-  annotations: {}
-  hosts:
-    - host: reacheraven.local  # [ingress.hosts[0].host] the domain name for the Ingress rule.
-      paths:
-        - path: /            # [ingress.hosts[0].paths[0].path] the URL path for routing traffic.
-          pathType: ImplementationSpecific  # [ingress.hosts[0].paths[0].pathType] specifies the type of path matching.
-  # [ingress.tls] specifies TLS configuration for the Ingress.
-  tls: []
+  # --- Bitnami RabbitMQ Subchart Settings ---
+  # Reference: https://artifacthub.io/packages/helm/bitnami/rabbitmq
+
+  auth:
+    # The username for the RabbitMQ user.
+    username: "user"
+    # The password for the RabbitMQ user. This should be set as a Kubernetes Secret
+    # to avoid exposing sensitive data. This value should be set during the Helm
+    # installation using a Secret and referenced here.
+    password: "changeme"
+
+  extraEnvVars:
+    - name: RABBITMQ_MANAGEMENT_ALLOW_WEB_ACCESS
+      value: "yes"
+  persistence:
+    enabled: true
+    # Suggested minimal disk size for queues and logs:
+    size: 2Gi
+  # Additional fields (e.g., resources, metrics, networkPolicy) can be placed here.
