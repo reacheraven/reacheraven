@@ -49,6 +49,9 @@ reacheraven:
     service:
       # ClusterIP exposes the service internally within the cluster.
       type: ClusterIP
+    #api:
+    # Backend platform api
+    #  host: http://localhost:8080 
 
   # API Service Configuration
   api:
