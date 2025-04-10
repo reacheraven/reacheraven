@@ -44,7 +44,7 @@ reacheraven:
   # Web (Frontend) Configuration
   web:
     image: "reacheraven/reacheraven-web"
-    tag: "v1.0.14"
+    tag: "v1.0.15"
     replicas: 1  # Number of instances for the web frontend.
     service:
       # ClusterIP exposes the service internally within the cluster.
@@ -53,7 +53,7 @@ reacheraven:
   # API Service Configuration
   api:
     image: "reacheraven/reacheraven-api"
-    tag: "v1.0.8"
+    tag: "v1.0.10"
     replicas: 2  # Number of instances for the API service.
     service:
       type: ClusterIP
