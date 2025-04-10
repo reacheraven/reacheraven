@@ -49,7 +49,7 @@ reacheraven:
     service:
       # ClusterIP exposes the service internally within the cluster.
       type: ClusterIP
-    #api:
+    api: {}
     # Backend platform api
     #  host: http://localhost:8080 
 

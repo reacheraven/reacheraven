@@ -39,4 +39,10 @@ spec:
             - name: TZ
               value: "{{ .Values.global.timezone | default "UTC" }}"
             - name: REACT_APP_API_URL
-              value: "{{ .Values.reacheraven.web.api.host | default "http://localhost:8080" }}"
+            {{- if .Values.reacheraven.web.api.host }}
+              value: "{{ .Values.reacheraven.web.api.host }}"
+            {{- else }}
+              value: "http://{{ include "reacheraven.fullname" . }}-api:8080"
+            {{- end }}
+
+             
