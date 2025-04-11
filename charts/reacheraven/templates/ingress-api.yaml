@@ -23,6 +23,6 @@ spec:
               service:
                 name: {{ include "reacheraven.fullname" . }}-api
                 port:
-                  number: 80
+                  number: 8080
         {{- end }}
 {{- end }}

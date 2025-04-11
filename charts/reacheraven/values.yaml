@@ -41,6 +41,7 @@ global:
 # Reacheraven Application Configuration
 #######################################
 reacheraven:
+
   # Web (Frontend) Configuration
   web:
     image: "reacheraven/reacheraven-web"
@@ -50,11 +51,11 @@ reacheraven:
       type: ClusterIP  # Service exposed internally within the cluster.
 
     # Uncomment and set the hostname to the desired domain.
-    # api:
+    # backend:
     # backend API URL for the web application.
     # This can be set to the internal service name or an external URL.
     #  host: http://localhost:8080 
-    api: {}
+    backend: {}
 
     # ingress configuration for the web application, this is enabled by default.
     ingress:

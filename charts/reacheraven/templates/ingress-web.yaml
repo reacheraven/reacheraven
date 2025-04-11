@@ -23,6 +23,6 @@ spec:
               service:
                 name: {{ include "reacheraven.fullname" . }}-web
                 port:
-                  number: 80
+                  number: 3000
         {{- end }}
 {{- end }}

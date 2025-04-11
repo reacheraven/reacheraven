@@ -9,9 +9,19 @@ spec:
   hosts:
 {{- if .Values.reacheraven.web.istio.hosts }}
 {{ toYaml .Values.reacheraven.web.istio.hosts | indent 4 }}
-{{- else }}
-    - {{ .Values.reacheraven.web.ingress.host | quote }}
+{{- end }}
+{{- if .Values.reacheraven.web.istio.gateways }}
+  gateways:
+{{ toYaml .Values.reacheraven.web.istio.gateways | indent 4 }}
 {{- end }}
   http:
+{{- if .Values.reacheraven.web.istio.http }}
 {{ toYaml .Values.reacheraven.web.istio.http | indent 4 }}
+{{- else }}
+    - route:
+        - destination:
+            host: {{ include "reacheraven.fullname" . }}-web
+            port:
+              number: 3000
+{{- end }}
 {{- end }}

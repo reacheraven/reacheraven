@@ -39,8 +39,8 @@ spec:
             - name: TZ
               value: "{{ .Values.global.timezone | default "UTC" }}"
             - name: REACHERAVEN_API_URL
-            {{- if .Values.reacheraven.web.api.host }}
-              value: "{{ .Values.reacheraven.web.api.host }}"
+            {{- if .Values.reacheraven.web.backend.host }}
+              value: "{{ .Values.reacheraven.web.backend.host }}"
             {{- else }}
               value: "http://{{ include "reacheraven.fullname" . }}-api:8080"
             {{- end }}
