@@ -38,7 +38,7 @@ spec:
           env:
             - name: TZ
               value: "{{ .Values.global.timezone | default "UTC" }}"
-            - name: REACT_APP_API_URL
+            - name: REACHERAVEN_API_URL
             {{- if .Values.reacheraven.web.api.host }}
               value: "{{ .Values.reacheraven.web.api.host }}"
             {{- else }}

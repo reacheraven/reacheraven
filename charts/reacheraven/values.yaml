@@ -44,14 +44,72 @@ reacheraven:
   # Web (Frontend) Configuration
   web:
     image: "reacheraven/reacheraven-web"
-    tag: "v1.0.15"
+    tag: "v1.0.17"
     replicas: 1  # Number of instances for the web frontend.
     service:
-      # ClusterIP exposes the service internally within the cluster.
-      type: ClusterIP
-    api: {}
-    # Backend platform api
+      type: ClusterIP  # Service exposed internally within the cluster.
+
+    # Uncomment and set the hostname to the desired domain.
+    # api:
+    # backend API URL for the web application.
+    # This can be set to the internal service name or an external URL.
     #  host: http://localhost:8080 
+    api: {}
+
+    # ingress configuration for the web application, this is enabled by default.
+    ingress:
+      enabled: true
+      # Hostname where the web application will be accessible
+      host: "reacheraven-web.example.com"
+      # Define the paths for routing
+      paths:
+        - path: /
+          pathType: Prefix  # Can also be 'ImplementationSpecific', based on your controller.
+ 
+      # Uncomment and customize the example below to set custom TLS settings.
+      # tls:
+      #   - hosts:
+      #       - reacheraven-web.example.com
+      #     secretName: reacheraven-web-tls-secret # you needed to create this secret
+      tls: {}
+
+      # Uncomment and customize the example below to set custom annotations.
+      # annotations:
+      #   # Common configurations for Nginx Ingress Controller:
+      #   nginx.ingress.kubernetes.io/use-regex: "true"
+      #   nginx.ingress.kubernetes.io/rewrite-target: "/"
+      #   # Example for Google Cloud (GKE):
+      #   kubernetes.io/ingress.allow-http: "false"
+      #   kubernetes.io/ingress.global-static-ip-name: "reacheraven-web-ip"
+      #   # Example for AWS ALB Ingress Controller:
+      #   alb.ingress.kubernetes.io/scheme: "internet-facing"
+      #   alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+      #   # Example for Azure Application Gateway Ingress Controller:
+      #   appgw.ingress.kubernetes.io/use-private-ip: "true"
+      #   appgw.ingress.kubernetes.io/ssl-redirect: "true"
+      annotations: {}
+
+    istio:
+      enabled: false
+
+      # Uncomment and customize the example below to set custom hosts.
+      # hosts:
+      #  - reacheraven-web.example.com
+      hosts: {}
+
+      # Uncomment and customize the example below to set custom http.
+      # http:
+      #  - name: "reviews-v2-routes"
+      #    match:
+      #    - uri:
+      #        prefix: "/wpcatalog"
+      #    rewrite:
+      #      uri: "/newcatalog"
+      #    route:
+      #    - destination:
+      #        host: reviews.prod.svc.cluster.local
+      #        subset: v2
+      http: {}
 
   # API Service Configuration
   api:
@@ -60,6 +118,61 @@ reacheraven:
     replicas: 2  # Number of instances for the API service.
     service:
       type: ClusterIP
+
+    # ingress configuration for the api application, this is enabled by default.
+    ingress:
+      enabled: true
+      # Hostname where the api application will be accessible
+      host: "reacheraven-api.example.com"
+      # Define the paths for routing
+      paths:
+        - path: /
+          pathType: Prefix  # Can also be 'ImplementationSpecific', based on your controller.
+ 
+      # Uncomment and customize the example below to set custom TLS settings.
+      # tls:
+      #   - hosts:
+      #       - reacheraven-api.example.com
+      #     secretName: reacheraven-api-tls-secret # you needed to create this secret
+      tls: {}
+
+      # Uncomment and customize the example below to set custom annotations.
+      # annotations:
+      #   # Common configurations for Nginx Ingress Controller:
+      #   nginx.ingress.kubernetes.io/use-regex: "true"
+      #   nginx.ingress.kubernetes.io/rewrite-target: "/"
+      #   # Example for Google Cloud (GKE):
+      #   kubernetes.io/ingress.allow-http: "false"
+      #   kubernetes.io/ingress.global-static-ip-name: "reacheraven-api-ip"
+      #   # Example for AWS ALB Ingress Controller:
+      #   alb.ingress.kubernetes.io/scheme: "internet-facing"
+      #   alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+      #   # Example for Azure Application Gateway Ingress Controller:
+      #   appgw.ingress.kubernetes.io/use-private-ip: "true"
+      #   appgw.ingress.kubernetes.io/ssl-redirect: "true"
+      annotations: {}
+
+    istio:
+      enabled: false
+
+      # Uncomment and customize the example below to set custom hosts.
+      # hosts:
+      #  - reacheraven-api.example.com
+      hosts: {}
+
+      # Uncomment and customize the example below to set custom http.
+      # http:
+      #  - name: "reviews-v2-routes"
+      #    match:
+      #    - uri:
+      #        prefix: "/wpcatalog"
+      #    rewrite:
+      #      uri: "/newcatalog"
+      #    route:
+      #    - destination:
+      #        host: reviews.prod.svc.cluster.local
+      #        subset: v2
+      http: {}
 
   # Scheduler Service Configuration
   scheduler:

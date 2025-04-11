@@ -1,0 +1,17 @@
+{{- if .Values.reacheraven.web.istio.enabled }}
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: {{ include "reacheraven.fullname" . }}-web
+  labels:
+    app: {{ include "reacheraven.name" . }}
+spec:
+  hosts:
+{{- if .Values.reacheraven.web.istio.hosts }}
+{{ toYaml .Values.reacheraven.web.istio.hosts | indent 4 }}
+{{- else }}
+    - {{ .Values.reacheraven.web.ingress.host | quote }}
+{{- end }}
+  http:
+{{ toYaml .Values.reacheraven.web.istio.http | indent 4 }}
+{{- end }}
