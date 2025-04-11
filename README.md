@@ -92,8 +92,14 @@ helm repo update
 ### Basic Installation
 
 ```bash
-helm install reacheraven reacheraven/reacheraven
+helm install reacheraven reacheraven/reacheraven \
+     --set reacheraven.web.ingress="https://reacheraven-web-host" \
+     --set reacheraven.api.ingress="https://reacheraven-api-host" \
+     --namespace reacheraven
 ```
+
+> NOTE: By default, the platform is installed and exposed via an ingress. If you need to apply customizations—such as using Istio, adding annotations for ingress types, or other ingress adjustments - please refer to [Advanced Ingress Configuration](https://docs.reacheraven.io/#/installation/advanced-exposition) in docs for further details. 
+
 
 This command will:
 
