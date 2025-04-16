@@ -1,0 +1,112 @@
+version: '3.9'
+
+services:
+
+  web:
+    image: reacheraven/reacheraven-web:v1.0.14
+    container_name: reacheraven-web
+    ports:
+      - "3000:3000"
+    depends_on:
+      api:
+        condition: service_started
+
+  api:
+    image: reacheraven/reacheraven-api:v1.0.8
+    container_name: reacheraven-api
+    environment:
+      - PORT=8080
+      - POSTGRES_URL=postgres://postgres:changeme@postgres:5432/reacheraven?sslmode=disable
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=my_secret_key
+      - JWT_EXPIRATION_HOURS=24
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      - redis
+    restart: always
+
+  scheduler:
+    image: reacheraven/reacheraven-scheduler:v1.0.1
+    container_name: reacheraven-scheduler
+    environment:
+      - TZ=America/Sao_Paulo
+      - PORT=8081
+      - POSTGRES_URL=postgres://postgres:changeme@postgres:5432/reacheraven?sslmode=disable
+      - REDIS_URL=redis://redis:6379
+      - RABBITMQ_URL=amqp://user:bitnami@rabbitmq:5672
+    ports:
+      - "8081:8081"
+    depends_on:
+      - postgres
+      - redis
+      - api
+    restart: always
+
+  notifier:
+    image: reacheraven/reacheraven-notifier:v1.0.1
+    container_name: reacheraven-notifier
+    environment:
+      - POSTGRES_URL=postgres://postgres:changeme@postgres:5432/reacheraven?sslmode=disable
+      - RABBITMQ_URL=amqp://user:bitnami@rabbitmq:5672
+    depends_on:
+      - postgres
+      - rabbitmq
+      - api
+    restart: always
+
+  postgres:
+    image: bitnami/postgresql:17.4.0
+    container_name: reacheraven-postgres
+    environment:
+      - POSTGRESQL_USERNAME=postgres
+      - POSTGRESQL_PASSWORD=changeme
+      - POSTGRESQL_DATABASE=reacheraven
+    ports:
+      - "5432:5432"
+    volumes:
+      - database_data:/bitnami/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: bitnami/redis:7.4.2
+    container_name: reacheraven-redis
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/bitnami/redis
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  rabbitmq:
+    image: bitnami/rabbitmq:4.0.7
+    container_name: reacheraven-rabbitmq
+    environment:
+      - RABBITMQ_MANAGEMENT_ALLOW_WEB_ACCESS=yes
+      - RABBITMQ_USERNAME=user
+      - RABBITMQ_PASSWORD=bitnami
+    ports:
+      - "5672:5672"
+      - "15672:15672" # Web UI
+    volumes:
+      - broker_data:/bitnami
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  database_data:
+  redis_data:
+  broker_data:

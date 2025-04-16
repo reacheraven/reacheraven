@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "reacheraven.name" . }}-notifier
+  labels:
+    app: {{ include "reacheraven.name" . }}
+    component: notifier
+spec:
+  replicas: {{ .Values.reacheraven.notifier.replicas }}
+  selector:
+    matchLabels:
+      app: {{ include "reacheraven.name" . }}
+      component: notifier
+  template:
+    metadata:
+      labels:
+        app: {{ include "reacheraven.name" . }}
+        component: notifier
+    spec:
+      affinity: 
+        {{- if .Values.global.affinity }}
+        {{- toYaml .Values.global.affinity | nindent 6 }}
+        {{- end }}
+      tolerations:
+        {{- if .Values.global.tolerations }}
+        {{- toYaml .Values.global.tolerations | nindent 6 }}
+        {{- end }}
+      nodeSelector:
+        {{- if .Values.global.nodeSelector }}
+        {{- toYaml .Values.global.nodeSelector | nindent 8 }}
+        {{- end }}
+      {{- if or .Values.reacheraven.dependencies.postgresql.install .Values.reacheraven.dependencies.rabbitmq.install }}
+      initContainers:
+        - name: wait-for-postgres
+          image: busybox
+          command: ["sh", "-c"]
+          args:
+            - |
+              echo "Waiting for PostgreSQL at {{ include "reacheraven.fullname" . }}-postgresql-hl:5432..."
+              until nc -z {{ include "reacheraven.fullname" . }}-postgresql-hl 5432; do
+                echo "Sleeping for 2s..."
+                sleep 2
+              done
+              echo "PostgreSQL is up!"
+        - name: wait-for-rabbitmq
+          image: curlimages/curl:latest
+          command: ["sh", "-c"]
+          args:
+            - |
+              echo "Waiting for RabbitMQ management API at {{ include "reacheraven.fullname" . }}-rabbitmq-headless:15672..."
+              until curl -fsSL http://{{ include "reacheraven.fullname" . }}-rabbitmq-headless:15672/api/version >/dev/null 2>&1; do
+                echo "Sleeping for 2s..."
+                sleep 2
+              done
+              echo "RabbitMQ management API is up!"
+      {{- end }}
+      containers:
+        - name: notifier
+          image: "{{ .Values.reacheraven.notifier.image }}:{{ .Values.reacheraven.notifier.tag }}"
+          imagePullPolicy: {{ .Values.global.imagePullPolicy | default "Always" }}
+          ports:
+            - containerPort: 8082
+          env:
+            - name: TZ
+              value: "{{ .Values.global.timezone | default "UTC" }}"
+          envFrom:
+            - secretRef:
+                name: {{ include "reacheraven.fullname" . }}-credentials

@@ -1,0 +1,28 @@
+{{- if .Values.reacheraven.web.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "reacheraven.fullname" . }}-web
+  labels:
+    app: {{ include "reacheraven.name" . }}
+  annotations:
+{{ toYaml .Values.reacheraven.web.ingress.annotations | indent 4 }}
+spec:
+  {{- if .Values.reacheraven.web.ingress.tls }}
+  tls:
+{{ toYaml .Values.reacheraven.web.ingress.tls | indent 4 }}
+  {{- end }}
+  rules:
+    - host: {{ .Values.reacheraven.web.ingress.host | quote }}
+      http:
+        paths:
+        {{- range .Values.reacheraven.web.ingress.paths }}
+          - path: {{ .path | quote }}
+            pathType: {{ .pathType | default "Prefix" | quote }}
+            backend:
+              service:
+                name: {{ include "reacheraven.fullname" . }}-web
+                port:
+                  number: 3000
+        {{- end }}
+{{- end }}

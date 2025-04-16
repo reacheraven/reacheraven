@@ -1,0 +1,5 @@
+charts/reacheraven/charts/
+*.tgz
+docs/index.yaml.old
+.DS_Store
+Chart.lock

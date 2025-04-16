@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "reacheraven.fullname" . }}-notifier
+  labels:
+    app: {{ include "reacheraven.name" . }}
+    component: notifier
+spec:
+  type: {{ .Values.reacheraven.notifier.service.type }}
+  selector:
+    app: {{ include "reacheraven.name" . }}
+    component: notifier
+  ports:
+    - name: http
+      port: 8082
+      targetPort: 8082

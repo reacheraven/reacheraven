@@ -1,0 +1,27 @@
+{{- if .Values.reacheraven.api.istio.enabled }}
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: {{ include "reacheraven.fullname" . }}-api
+  labels:
+    app: {{ include "reacheraven.name" . }}
+spec:
+  hosts:
+{{- if .Values.reacheraven.api.istio.hosts }}
+{{ toYaml .Values.reacheraven.api.istio.hosts | indent 4 }}
+{{- end }}
+{{- if .Values.reacheraven.api.istio.gateways }}
+  gateways:
+{{ toYaml .Values.reacheraven.api.istio.gateways | indent 4 }}
+{{- end }}
+  http:
+{{- if .Values.reacheraven.api.istio.http }}
+{{ toYaml .Values.reacheraven.api.istio.http | indent 4 }}
+{{- else }}
+    - route:
+        - destination:
+            host: {{ include "reacheraven.fullname" . }}-api
+            port:
+              number: 8080
+{{- end }}
+{{- end }}
