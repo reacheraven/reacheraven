@@ -1,3 +1,4 @@
+{{- if .Values.reacheraven.notifier.enabled -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -66,3 +67,5 @@ spec:
           envFrom:
             - secretRef:
                 name: {{ include "reacheraven.fullname" . }}-credentials
+
+{{- end -}}

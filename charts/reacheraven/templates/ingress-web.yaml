@@ -2,16 +2,16 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "reacheraven.fullname" . }}-web
+  name: {{ include "reacheraven.fullname" . }}-web    # aqui ainda é contexto raiz
   labels:
     app: {{ include "reacheraven.name" . }}
   annotations:
 {{ toYaml .Values.reacheraven.web.ingress.annotations | indent 4 }}
 spec:
-  {{- if .Values.reacheraven.web.ingress.tls }}
+{{- if gt (len .Values.reacheraven.web.ingress.tls) 0 }}
   tls:
 {{ toYaml .Values.reacheraven.web.ingress.tls | indent 4 }}
-  {{- end }}
+{{- end }}
   rules:
     - host: {{ .Values.reacheraven.web.ingress.host | quote }}
       http:
@@ -21,7 +21,7 @@ spec:
             pathType: {{ .pathType | default "Prefix" | quote }}
             backend:
               service:
-                name: {{ include "reacheraven.fullname" . }}-web
+                name: {{ include "reacheraven.fullname" $ }}-web
                 port:
                   number: 3000
         {{- end }}

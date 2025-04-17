@@ -1,4 +1,3 @@
-NOTES:
   Thank you for installing/upgrading Reacheraven!
 
   Release: {{ .Release.Name }}
@@ -11,10 +10,7 @@ NOTES:
   2. Check the services:
      kubectl get svc --namespace {{ .Release.Namespace }} -l app={{ include "reacheraven.name" . }}
 
-  3. If you configured Ingress, the Web interface may be accessible at:
-     http{{ if and .Values.ingress (or (.Values.ingress.tls) (index (index .Values.ingress.hosts 0) "tls")) }}s{{ end }}://{{ if .Values.ingress }}{{ index (index .Values.ingress.hosts 0) "host" }}{{ end }}/
-
-  4. If no Ingress is defined, you can port-forward to view the Web UI:
+  3. If no Ingress is defined, you can port-forward to view the Web UI:
      kubectl port-forward svc/{{ include "reacheraven.fullname" . }}-web 3000:3000 --namespace {{ .Release.Namespace }}
      Then open http://127.0.0.1:3000/dashboard
 

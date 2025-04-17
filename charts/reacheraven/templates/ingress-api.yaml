@@ -8,10 +8,10 @@ metadata:
   annotations:
 {{ toYaml .Values.reacheraven.api.ingress.annotations | indent 4 }}
 spec:
-  {{- if .Values.reacheraven.api.ingress.tls }}
+{{- if gt (len .Values.reacheraven.api.ingress.tls) 0 }}
   tls:
 {{ toYaml .Values.reacheraven.api.ingress.tls | indent 4 }}
-  {{- end }}
+{{- end }}
   rules:
     - host: {{ .Values.reacheraven.api.ingress.host | quote }}
       http:
@@ -21,7 +21,7 @@ spec:
             pathType: {{ .pathType | default "Prefix" | quote }}
             backend:
               service:
-                name: {{ include "reacheraven.fullname" . }}-api
+                name: {{ include "reacheraven.fullname" $ }}-api
                 port:
                   number: 8080
         {{- end }}
