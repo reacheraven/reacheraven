@@ -117,7 +117,7 @@ reacheraven:
   api:
     enabled: true
     image: "reacheraven/reacheraven-api"
-    tag: "v1.0.13"
+    tag: "v1.0.15"
     replicas: 2  # Number of instances for the API service.
     service:
       type: ClusterIP
@@ -190,7 +190,7 @@ reacheraven:
   notifier:
     enabled: true
     image: "reacheraven/reacheraven-notifier"
-    tag: "v1.0.1"
+    tag: "v1.0.2"
     replicas: 1  # Number of notifier instances.
     service:
       type: ClusterIP

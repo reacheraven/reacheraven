@@ -3,7 +3,7 @@ version: '3.9'
 services:
 
   web:
-    image: reacheraven/reacheraven-web:v1.0.14
+    image: reacheraven/reacheraven-web:v1.0.22
     container_name: reacheraven-web
     ports:
       - "3000:3000"
@@ -12,7 +12,7 @@ services:
         condition: service_started
 
   api:
-    image: reacheraven/reacheraven-api:v1.0.8
+    image: reacheraven/reacheraven-api:v1.0.15
     container_name: reacheraven-api
     environment:
       - PORT=8080
@@ -28,7 +28,7 @@ services:
     restart: always
 
   scheduler:
-    image: reacheraven/reacheraven-scheduler:v1.0.1
+    image: reacheraven/reacheraven-scheduler:v1.0.2
     container_name: reacheraven-scheduler
     environment:
       - TZ=America/Sao_Paulo
@@ -45,7 +45,7 @@ services:
     restart: always
 
   notifier:
-    image: reacheraven/reacheraven-notifier:v1.0.1
+    image: reacheraven/reacheraven-notifier:v1.0.2
     container_name: reacheraven-notifier
     environment:
       - POSTGRES_URL=postgres://postgres:changeme@postgres:5432/reacheraven?sslmode=disable
