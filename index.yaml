@@ -2,6 +2,30 @@ apiVersion: v1
 entries:
   reacheraven:
   - apiVersion: v2
+    appVersion: 1.2.0
+    created: "2025-07-09T00:24:54.736912392Z"
+    dependencies:
+    - condition: reacheraven.dependencies.postgresql.install
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 16.6.0
+    - condition: reacheraven.dependencies.redis.install
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: 20.11.4
+    - condition: reacheraven.dependencies.rabbitmq.install
+      name: rabbitmq
+      repository: https://charts.bitnami.com/bitnami
+      version: 15.4.1
+    description: A Helm chart for deploying the Reacheraven platform
+    digest: 0fd3e3d8e11433d10e677ed1a682528f98e3bce062e522de7d267d16dc76d763
+    icon: https://avatars.githubusercontent.com/u/204897811?s=48&v=4
+    name: reacheraven
+    type: application
+    urls:
+    - https://github.com/reacheraven/reacheraven/releases/download/reacheraven-0.4.2/reacheraven-0.4.2.tgz
+    version: 0.4.2
+  - apiVersion: v2
     appVersion: 1.1.0
     created: "2025-06-05T10:43:06.278398905Z"
     dependencies:
@@ -288,4 +312,4 @@ entries:
     urls:
     - https://github.com/reacheraven/reacheraven/releases/download/reacheraven-0.1.0/reacheraven-0.1.0.tgz
     version: 0.1.0
-generated: "2025-06-05T10:43:06.278427208Z"
+generated: "2025-07-09T00:24:54.737020413Z"
