@@ -46,7 +46,7 @@ reacheraven:
   web:
     enabled: true
     image: "reacheraven/reacheraven-web"
-    tag: "v1.0.22"
+    tag: "v1.0.46"
     replicas: 1  # Number of instances for the web frontend.
     service:
       type: ClusterIP  # Service exposed internally within the cluster.
@@ -117,7 +117,7 @@ reacheraven:
   api:
     enabled: true
     image: "reacheraven/reacheraven-api"
-    tag: "v1.0.15"
+    tag: "v1.0.24"
     replicas: 2  # Number of instances for the API service.
     service:
       type: ClusterIP
@@ -181,7 +181,7 @@ reacheraven:
   scheduler:
     enabled: true
     image: "reacheraven/reacheraven-scheduler"
-    tag: "v1.0.2"
+    tag: "v1.0.4"
     replicas: 1  # Number of scheduler instances; typically one is sufficient.
     service:
       type: ClusterIP
@@ -190,7 +190,7 @@ reacheraven:
   notifier:
     enabled: true
     image: "reacheraven/reacheraven-notifier"
-    tag: "v1.0.2"
+    tag: "v1.0.4"
     replicas: 1  # Number of notifier instances.
     service:
       type: ClusterIP

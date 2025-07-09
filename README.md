@@ -8,12 +8,12 @@ This document provides comprehensive instructions for **self-hosting** the Reach
 
 ## Overview
 
-**Reacheraven** is a modern platform for observability, incident management, and real-time alerting. It allows you to monitor the health of systems and applications.
+**Reacheraven** is an AI-integrated, self-hosted observability platform that delivers real-time alerts, automated status updates and advanced analytics—empowering multi-tenant teams to proactively monitor system health and communicate incidents with confidence.
 
 Official resources:
 - **Website**: [https://reacheraven.io/](https://reacheraven.io/)
 - **Documentation**: [https://docs.reacheraven.io/](https://docs.reacheraven.io/)
-- **Demo**: [https://demo.reacheraven.io/](https://demo.reacheraven.io/)
+- **Demo**: [https://web.reacheraven.io/](https://web.reacheraven.io/)
 - **Helm Repository**: [https://reacheraven.github.io/reacheraven/](https://reacheraven.github.io/reacheraven/)
 
 ## Running locally with Docker Compose
@@ -98,7 +98,7 @@ helm install reacheraven reacheraven/reacheraven \
      --namespace reacheraven
 ```
 
-> NOTE: By default, the platform is installed and exposed via an ingress. If you need to apply customizations—such as using Istio, adding annotations for ingress types, or other ingress adjustments - please refer to [Advanced Ingress Configuration](https://docs.reacheraven.io/#/installation/advanced-exposition) in docs for further details. 
+> Note: By default, the platform is installed and exposed via an ingress. If you need to apply customizations—such as using Istio, adding annotations for ingress types, or other ingress adjustments - please refer to [Advanced Ingress Configuration](https://docs.reacheraven.io/#/installation/advanced-exposition) in docs for further details. 
 
 
 This command will:
@@ -235,7 +235,7 @@ Use `ingress.hosts`, `ingress.tls`, etc., to enable Ingress and expose Reacherav
 
 - **Official Website**: [https://reacheraven.io/](https://reacheraven.io/)
 - **Documentation**: [https://docs.reacheraven.io/](https://docs.reacheraven.io/)
-- **Demo**: [https://demo.reacheraven.io/](https://demo.reacheraven.io/)
+- **Demo**: [https://web.reacheraven.io/](https://web.reacheraven.io/)
 - **Helm Repository**: [https://reacheraven.github.io/reacheraven/](https://reacheraven.github.io/reacheraven/)
 - **Source Code / Issues**: [https://github.com/reacheraven/reacheraven](https://github.com/reacheraven/reacheraven)
 
