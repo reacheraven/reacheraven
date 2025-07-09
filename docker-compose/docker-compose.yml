@@ -3,7 +3,7 @@ version: '3.9'
 services:
 
   web:
-    image: reacheraven/reacheraven-web:v1.0.46
+    image: reacheraven/reacheraven-web:v1.0.47
     container_name: reacheraven-web
     ports:
       - "3000:3000"

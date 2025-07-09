@@ -2,8 +2,8 @@ apiVersion: v2
 name: reacheraven
 description: A Helm chart for deploying the Reacheraven platform
 type: application
-version: 0.4.2
-appVersion: "1.2.0"
+version: 0.4.3
+appVersion: "1.2.1"
 icon: https://avatars.githubusercontent.com/u/204897811?s=48&v=4
 
 # Bitnami subchart dependencies (PostgreSQL, Redis, RabbitMQ).

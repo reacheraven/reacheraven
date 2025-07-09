@@ -46,7 +46,7 @@ reacheraven:
   web:
     enabled: true
     image: "reacheraven/reacheraven-web"
-    tag: "v1.0.46"
+    tag: "v1.0.47"
     replicas: 1  # Number of instances for the web frontend.
     service:
       type: ClusterIP  # Service exposed internally within the cluster.
