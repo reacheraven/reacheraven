@@ -117,7 +117,7 @@ reacheraven:
   api:
     enabled: true
     image: "reacheraven/reacheraven-api"
-    tag: "v1.0.26"
+    tag: "v1.0.27"
     replicas: 2  # Number of instances for the API service.
     service:
       type: ClusterIP
