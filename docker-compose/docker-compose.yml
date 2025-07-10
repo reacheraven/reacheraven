@@ -12,7 +12,7 @@ services:
         condition: service_started
 
   api:
-    image: reacheraven/reacheraven-api:v1.0.26
+    image: reacheraven/reacheraven-api:v1.0.27
     container_name: reacheraven-api
     environment:
       - PORT=8080

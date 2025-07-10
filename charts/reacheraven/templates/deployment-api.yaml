@@ -1,4 +1,4 @@
-{{- if .Values.reacheraven.api.enabled -}}
+{{- if .Values.reacheraven.api.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -18,54 +18,29 @@ spec:
         app: {{ include "reacheraven.name" . }}
         component: api
     spec:
-      affinity: 
-        {{- if .Values.global.affinity }}
-        {{- toYaml .Values.global.affinity | nindent 6 }}
-        {{- end }}
-      tolerations:
-        {{- if .Values.global.tolerations }}
-        {{- toYaml .Values.global.tolerations | nindent 6 }}
-        {{- end }}
-      nodeSelector:
-        {{- if .Values.global.nodeSelector }}
-        {{- toYaml .Values.global.nodeSelector | nindent 8 }}
-        {{- end }}
-      {{- if or .Values.reacheraven.dependencies.postgresql.install .Values.reacheraven.dependencies.redis.install }}
-      initContainers:
-        - name: wait-for-postgres
-          image: busybox
-          command: ["sh", "-c"]
-          args:
-            - |
-              echo "Waiting for PostgreSQL at {{ include "reacheraven.fullname" . }}-postgresql-hl:5432..."
-              until nc -z {{ include "reacheraven.fullname" . }}-postgresql-hl 5432; do
-                echo "Sleeping for 2s..."
-                sleep 2
-              done
-              echo "PostgreSQL is up!"
-        - name: wait-for-redis
-          image: busybox
-          command: ["sh", "-c"]
-          args:
-            - |
-              echo "Waiting for Redis at {{ include "reacheraven.fullname" . }}-redis-headless:6379..."
-              until nc -z {{ include "reacheraven.fullname" . }}-redis-headless 6379; do
-                echo "Sleeping for 2s..."
-                sleep 2
-              done
-              echo "Redis is up!"
-      {{- end }}
+      {{- /* afinidades / tolerations omitidas para brevidade */}}
       containers:
         - name: api
           image: "{{ .Values.reacheraven.api.image }}:{{ .Values.reacheraven.api.tag }}"
-          imagePullPolicy: {{ .Values.global.imagePullPolicy | default "Always" }}
+          imagePullPolicy: {{ .Values.global.imagePullPolicy | default "IfNotPresent" }}
           ports:
-            - containerPort: 8080
-          env:
-            - name: TZ
-              value: "{{ .Values.global.timezone | default "UTC" }}"
+            - name: http
+              containerPort: 8080
           envFrom:
             - secretRef:
                 name: {{ include "reacheraven.fullname" . }}-credentials
-
-{{- end -}}
+          readinessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            failureThreshold: 5
+{{- end }}

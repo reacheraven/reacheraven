@@ -45,6 +45,10 @@ spec:
             {{- else }}
               value: "http://{{ include "reacheraven.fullname" . }}-api:8080"
             {{- end }}
+            {{- if .Values.reacheraven.web.demo }}
+            - name: REACHERAVEN_TRON
+              value: "demo"
+            {{- else }}
 
 {{- end -}}
              
