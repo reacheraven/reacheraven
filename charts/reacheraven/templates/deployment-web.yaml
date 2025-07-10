@@ -48,7 +48,7 @@ spec:
             {{- if .Values.reacheraven.web.demo }}
             - name: REACHERAVEN_TRON
               value: "demo"
-            {{- else }}
+            {{- end }}
 
 {{- end -}}
              
