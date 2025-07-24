@@ -64,6 +64,28 @@ spec:
           env:
             - name: TZ
               value: "{{ .Values.global.timezone | default "UTC" }}"
+            - name: RABBITMQ_EXCHANGE
+              value: {{ .Values.reacheraven.notifier.env.rabbitmqExchange | quote }}
+            - name: RABBITMQ_QUEUE
+              value: {{ .Values.reacheraven.notifier.env.rabbitmqQueue | quote }}
+            - name: RABBITMQ_ROUTING_KEY
+              value: {{ .Values.reacheraven.notifier.env.rabbitmqRoutingKey | quote }}
+            - name: EMAIL_FROM
+              value: {{ .Values.reacheraven.notifier.env.emailFrom | quote }}
+            - name: SMTP_HOST
+              value: {{ .Values.reacheraven.notifier.env.smtp.host | quote }}
+            - name: SMTP_PORT
+              value: {{ .Values.reacheraven.notifier.env.smtp.port | quote }}
+            - name: SMTP_USER
+              value: {{ .Values.reacheraven.notifier.env.smtp.user | quote }}
+            - name: SMTP_PASS
+              value: {{ .Values.reacheraven.notifier.env.smtp.pass | quote }}
+            - name: SMTP_TLS
+              value: {{ .Values.reacheraven.notifier.env.smtp.tls | quote }}
+            - name: EMAIL_PROVIDER
+              value: {{ .Values.reacheraven.notifier.env.emailProvider | quote }}
+            - name: AI_MODEL
+              value: {{ .Values.reacheraven.notifier.env.aiModel | quote }}
           envFrom:
             - secretRef:
                 name: {{ include "reacheraven.fullname" . }}-credentials

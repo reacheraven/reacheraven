@@ -14,14 +14,12 @@ global:
   #                 - "e2e-az1"
   #                 - "e2e-az2"
   affinity: {}
-
   # Uncomment and customize the example below to add node tolerations.
   # tolerations:
   #   - key: "key1"
   #     operator: "Equal"
   #     value: "value1"
   tolerations: []
-
   nodeSelector: {}
   # Uncomment and customize the example below to set custom node selectors.
   # nodeSelector:
@@ -33,31 +31,26 @@ global:
   # Determines when container images are pulled.
   # "IfNotPresent" will use the local image if available.
   imagePullPolicy: "IfNotPresent"
-
   # Default timezone for the application.
   timezone: "UTC"
-
 #######################################
 # Reacheraven Application Configuration
 #######################################
 reacheraven:
-
   # Web (Frontend) Configuration
   web:
     enabled: true
     image: "reacheraven/reacheraven-web"
-    tag: "v1.0.51"
-    replicas: 1  # Number of instances for the web frontend.
+    tag: "v1.0.53"
+    replicas: 1 # Number of instances for the web frontend.
     service:
-      type: ClusterIP  # Service exposed internally within the cluster.
-
+      type: ClusterIP # Service exposed internally within the cluster.
     # Uncomment and set the hostname to the desired domain.
     # backend:
     # backend API URL for the web application.
     # This can be set to the internal service name or an external URL.
     #  host: http://localhost:8080 
     backend: {}
-
     # ingress configuration for the web application, this is enabled by default.
     ingress:
       enabled: true
@@ -66,15 +59,13 @@ reacheraven:
       # Define the paths for routing
       paths:
         - path: /
-          pathType: Prefix  # Can also be 'ImplementationSpecific', based on your controller.
- 
+          pathType: Prefix # Can also be 'ImplementationSpecific', based on your controller.
       # Uncomment and customize the example below to set custom TLS settings.
       # tls:
       #   - hosts:
       #       - reacheraven-web.example.com
       #     secretName: reacheraven-web-tls-secret # you needed to create this secret
       tls: {}
-
       # Uncomment and customize the example below to set custom annotations.
       # annotations:
       #   # Common configurations for Nginx Ingress Controller:
@@ -90,15 +81,12 @@ reacheraven:
       #   appgw.ingress.kubernetes.io/use-private-ip: "true"
       #   appgw.ingress.kubernetes.io/ssl-redirect: "true"
       annotations: {}
-
     istio:
       enabled: false
-
       # Uncomment and customize the example below to set custom hosts.
       # hosts:
       #  - reacheraven-web.example.com
       hosts: {}
-
       # Uncomment and customize the example below to set custom http.
       # http:
       #  - name: "reviews-v2-routes"
@@ -112,16 +100,25 @@ reacheraven:
       #        host: reviews.prod.svc.cluster.local
       #        subset: v2
       http: {}
-
   # API Service Configuration
   api:
     enabled: true
     image: "reacheraven/reacheraven-api"
-    tag: "v1.0.28"
-    replicas: 2  # Number of instances for the API service.
+    tag: "v1.0.29"
+    replicas: 2 # Number of instances for the API service.
     service:
       type: ClusterIP
-
+    env:
+      jwtSecret: "please_change_me"
+      jwtExpirationHours: "24"
+      allowedOrigins: "*"
+      smtp:
+        host: "smtp.example.com"
+        port: "587"
+        username: ""
+        password: ""
+        defaultEmail: "noreply@example.com"
+      rabbitmqExchange: "core_events"
     # ingress configuration for the api application, this is enabled by default.
     ingress:
       enabled: true
@@ -130,15 +127,13 @@ reacheraven:
       # Define the paths for routing
       paths:
         - path: /
-          pathType: Prefix  # Can also be 'ImplementationSpecific', based on your controller.
- 
+          pathType: Prefix # Can also be 'ImplementationSpecific', based on your controller.
       # Uncomment and customize the example below to set custom TLS settings.
       # tls:
       #   - hosts:
       #       - reacheraven-api.example.com
       #     secretName: reacheraven-api-tls-secret # you needed to create this secret
       tls: {}
-
       # Uncomment and customize the example below to set custom annotations.
       # annotations:
       #   # Common configurations for Nginx Ingress Controller:
@@ -154,15 +149,12 @@ reacheraven:
       #   appgw.ingress.kubernetes.io/use-private-ip: "true"
       #   appgw.ingress.kubernetes.io/ssl-redirect: "true"
       annotations: {}
-
     istio:
       enabled: false
-
       # Uncomment and customize the example below to set custom hosts.
       # hosts:
       #  - reacheraven-api.example.com
       hosts: {}
-
       # Uncomment and customize the example below to set custom http.
       # http:
       #  - name: "reviews-v2-routes"
@@ -176,29 +168,42 @@ reacheraven:
       #        host: reviews.prod.svc.cluster.local
       #        subset: v2
       http: {}
-
   # Scheduler Service Configuration
   scheduler:
     enabled: true
     image: "reacheraven/reacheraven-scheduler"
-    tag: "v1.0.4"
-    replicas: 1  # Number of scheduler instances; typically one is sufficient.
+    tag: "v1.0.5"
+    replicas: 1 # Number of scheduler instances; typically one is sufficient.
     service:
       type: ClusterIP
-
+    env:
+      rabbitmqQueue: "incident_notifications"
+      rabbitmqExchange: "incident_events"
+      aiModel: "basic"
   # Notifier Service Configuration
   notifier:
     enabled: true
     image: "reacheraven/reacheraven-notifier"
-    tag: "v1.0.4"
-    replicas: 1  # Number of notifier instances.
+    tag: "v1.0.5"
+    replicas: 1 # Number of notifier instances.
     service:
       type: ClusterIP
-
+    env:
+      rabbitmqExchange: "incident_events"
+      rabbitmqQueue: "incident_notifications"
+      rabbitmqRoutingKey: "incident.created"
+      emailFrom: "noreply@example.com"
+      smtp:
+        host: "smtp.example.com"
+        port: "587"
+        user: ""
+        pass: ""
+        tls: "true"
+      emailProvider: "smtp"
+      aiModel: "basic"
   dependencies:
     # The dependencies section allows you to configure the subcharts for PostgreSQL,
     # Redis, and RabbitMQ. These are optional components that can be installed
-
     postgresql:
       # The connection string for PostgreSQL should be stored as a Kubernetes Secret
       # to avoid exposing sensitive data. This value should be set during the Helm
@@ -206,7 +211,6 @@ reacheraven:
       connectionString: "postgresql://postgres:changeme@reacheraven-postgresql-hl:5432/reacheraven?sslmode=disable"
       # If true, installs the Bitnami PostgreSQL subchart.
       install: true
-
     redis:
       # The connection string for Redis should be stored as a Kubernetes Secret
       # to avoid exposing sensitive data. This value should be set during the Helm
@@ -214,7 +218,6 @@ reacheraven:
       connectionString: "redis://default:changeme@reacheraven-redis-headless:6379"
       # If "install" is true, the Bitnami Redis chart is deployed.
       install: true
-
     rabbitmq:
       # The connection string for RabbitMQ should be stored as a Kubernetes Secret
       # to avoid exposing sensitive data. This value should be set during the Helm
@@ -222,19 +225,12 @@ reacheraven:
       connectionString: "amqp://user:changeme@reacheraven-rabbitmq-headless:5672/"
       # If true, installs the Bitnami RabbitMQ subchart.
       install: true
-
-
-
-
 #######################################
 # PostgreSQL Configuration
 #######################################
-
 postgresql:
-
   # --- Bitnami PostgreSQL Subchart Settings ---
   # Reference: https://artifacthub.io/packages/helm/bitnami/postgresql
-
   auth:
     # The username for the PostgreSQL user.
     username: "postgres"
@@ -249,21 +245,15 @@ postgresql:
       enabled: true
       # Suggested minimal size for initial production usage:
       size: 5Gi
-  # Additional fields (e.g., resources, metrics, networkPolicy) can be placed here.
-
-
+      # Additional fields (e.g., resources, metrics, networkPolicy) can be placed here.
 #######################################
 # Redis Configuration
 #######################################
-
 redis:
-
   # --- Bitnami Redis Subchart Settings ---
   # Single-instance mode (no cluster/replication).
   # Reference: https://artifacthub.io/packages/helm/bitnami/redis
-
   architecture: "standalone"
-
   auth:
     # The username for the Redis user.
     username: "default"
@@ -271,7 +261,6 @@ redis:
     # to avoid exposing sensitive data. This value should be set during the Helm
     # installation using a Secret and referenced here.
     password: "changeme"
-
   master:
     persistence:
       enabled: true
@@ -280,18 +269,13 @@ redis:
     extraEnvVars:
       - name: ALLOW_EMPTY_PASSWORD
         value: "no"
-
-  # Additional fields (e.g., resources, metrics, networkPolicy) can be placed here.
-
-
+        # Additional fields (e.g., resources, metrics, networkPolicy) can be placed here.
 #######################################
 # RabbitMQ Configuration
 #######################################
 rabbitmq:
-
   # --- Bitnami RabbitMQ Subchart Settings ---
   # Reference: https://artifacthub.io/packages/helm/bitnami/rabbitmq
-
   auth:
     # The username for the RabbitMQ user.
     username: "user"
@@ -299,7 +283,6 @@ rabbitmq:
     # to avoid exposing sensitive data. This value should be set during the Helm
     # installation using a Secret and referenced here.
     password: "changeme"
-
   extraEnvVars:
     - name: RABBITMQ_MANAGEMENT_ALLOW_WEB_ACCESS
       value: "yes"

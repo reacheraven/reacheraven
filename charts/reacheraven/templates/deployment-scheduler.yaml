@@ -75,6 +75,12 @@ spec:
           env:
             - name: TZ
               value: "{{ .Values.global.timezone | default "UTC" }}"
+            - name: RABBITMQ_QUEUE
+              value: {{ .Values.reacheraven.scheduler.env.rabbitmqQueue | quote }}
+            - name: RABBITMQ_EXCHANGE
+              value: {{ .Values.reacheraven.scheduler.env.rabbitmqExchange | quote }}
+            - name: AI_MODEL
+              value: {{ .Values.reacheraven.scheduler.env.aiModel | quote }}
           envFrom:
             - secretRef:
                 name: {{ include "reacheraven.fullname" . }}-credentials

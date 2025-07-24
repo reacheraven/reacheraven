@@ -26,6 +26,25 @@ spec:
           ports:
             - name: http
               containerPort: 8080
+          env:
+            - name: JWT_SECRET
+              value: {{ .Values.reacheraven.api.env.jwtSecret | quote }}
+            - name: JWT_EXPIRATION_HOURS
+              value: {{ .Values.reacheraven.api.env.jwtExpirationHours | quote }}
+            - name: ALLOWED_ORIGINS
+              value: {{ .Values.reacheraven.api.env.allowedOrigins | quote }}
+            - name: SMTP_HOST
+              value: {{ .Values.reacheraven.api.env.smtp.host | quote }}
+            - name: SMTP_PORT
+              value: {{ .Values.reacheraven.api.env.smtp.port | quote }}
+            - name: SMTP_USERNAME
+              value: {{ .Values.reacheraven.api.env.smtp.username | quote }}
+            - name: SMTP_PASSWORD
+              value: {{ .Values.reacheraven.api.env.smtp.password | quote }}
+            - name: DEFAULT_TO_EMAIL
+              value: {{ .Values.reacheraven.api.env.smtp.defaultEmail | quote }}
+            - name: RABBITMQ_EXCHANGE
+              value: {{ .Values.reacheraven.api.env.rabbitmqExchange | quote }}
           envFrom:
             - secretRef:
                 name: {{ include "reacheraven.fullname" . }}-credentials

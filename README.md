@@ -2,6 +2,12 @@
 
 This document provides comprehensive instructions for **self-hosting** the Reacheraven platform. You will find guidelines to:
 
+Key features:
+- Self-hosted observability platform with multi-tenant support
+- Real-time monitoring and incident notifications
+
+- Optional AI-powered insights
+
 - Run Reacheraven locally with **Docker Compose** (ideal for development and testing).
 - Deploy Reacheraven on **Kubernetes** using **Helm** (recommended for production).
 - Configure each service and understand the available parameters.
