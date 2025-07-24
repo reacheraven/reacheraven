@@ -201,6 +201,20 @@ reacheraven:
         tls: "true"
       emailProvider: "smtp"
       aiModel: "basic"
+  # AI Service Configuration
+  ai:
+    enabled: true
+    image: "reacheraven/reacheraven-ai"
+    tag: "v1.0.0"
+    replicas: 1
+    service:
+      type: ClusterIP
+    env:
+      rabbitmqUrl: "amqp://user:changeme@reacheraven-rabbitmq-headless:5672/"
+      aiEventsExchange: "ai_events"
+      questionRoutingKey: "question.asked"
+      aiQueue: "ai_insights"
+      redisUrl: "redis://default:changeme@reacheraven-redis-headless:6379/0"
   dependencies:
     # The dependencies section allows you to configure the subcharts for PostgreSQL,
     # Redis, and RabbitMQ. These are optional components that can be installed

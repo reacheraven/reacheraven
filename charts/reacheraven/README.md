@@ -24,6 +24,7 @@ Common settings:
 - `reacheraven.api.env.jwtSecret` – secret used to sign JWT tokens
 - `reacheraven.notifier.env.smtp.host` – SMTP server for notifications
 - `reacheraven.scheduler.env.rabbitmqQueue` – queue name for scheduled jobs
+- `reacheraven.ai.env.aiQueue` – queue name for AI requests
 
 For additional options see the comments in `values.yaml`.
 

@@ -1,0 +1,78 @@
+{{- if .Values.reacheraven.ai.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "reacheraven.name" . }}-ai
+  labels:
+    app: {{ include "reacheraven.name" . }}
+    component: ai
+spec:
+  replicas: {{ .Values.reacheraven.ai.replicas }}
+  selector:
+    matchLabels:
+      app: {{ include "reacheraven.name" . }}
+      component: ai
+  template:
+    metadata:
+      labels:
+        app: {{ include "reacheraven.name" . }}
+        component: ai
+    spec:
+      affinity:
+        {{- if .Values.global.affinity }}
+        {{- toYaml .Values.global.affinity | nindent 8 }}
+        {{- end }}
+      tolerations:
+        {{- if .Values.global.tolerations }}
+        {{- toYaml .Values.global.tolerations | nindent 8 }}
+        {{- end }}
+      nodeSelector:
+        {{- if .Values.global.nodeSelector }}
+        {{- toYaml .Values.global.nodeSelector | nindent 10 }}
+        {{- end }}
+      {{- if or (.Values.reacheraven.dependencies.redis.install) (.Values.reacheraven.dependencies.rabbitmq.install) }}
+      initContainers:
+        - name: wait-for-redis
+          image: busybox
+          command: ["sh", "-c"]
+          args:
+            - |
+              echo "Waiting for Redis at {{ include "reacheraven.fullname" . }}-redis-headless:6379..."
+              until nc -z {{ include "reacheraven.fullname" . }}-redis-headless 6379; do
+                echo "Sleeping for 2s..."
+                sleep 2
+              done
+              echo "Redis is up!"
+        - name: wait-for-rabbitmq
+          image: curlimages/curl:latest
+          command: ["sh", "-c"]
+          args:
+            - |
+              echo "Waiting for RabbitMQ management API at {{ include "reacheraven.fullname" . }}-rabbitmq-headless:15672..."
+              until curl -fsSL http://{{ include "reacheraven.fullname" . }}-rabbitmq-headless:15672/api/version >/dev/null 2>&1; do
+                echo "Sleeping for 2s..."
+                sleep 2
+              done
+              echo "RabbitMQ management API is up!"
+      {{- end }}
+      containers:
+        - name: ai
+          image: "{{ .Values.reacheraven.ai.image }}:{{ .Values.reacheraven.ai.tag }}"
+          imagePullPolicy: {{ .Values.global.imagePullPolicy | default "Always" }}
+          env:
+            - name: TZ
+              value: "{{ .Values.global.timezone | default "UTC" }}"
+            - name: RABBITMQ_URL
+              value: {{ .Values.reacheraven.ai.env.rabbitmqUrl | quote }}
+            - name: AI_EVENTS_EXCHANGE
+              value: {{ .Values.reacheraven.ai.env.aiEventsExchange | quote }}
+            - name: QUESTION_ROUTING_KEY
+              value: {{ .Values.reacheraven.ai.env.questionRoutingKey | quote }}
+            - name: AI_QUEUE
+              value: {{ .Values.reacheraven.ai.env.aiQueue | quote }}
+            - name: REDIS_URL
+              value: {{ .Values.reacheraven.ai.env.redisUrl | quote }}
+          envFrom:
+            - secretRef:
+                name: {{ include "reacheraven.fullname" . }}-credentials
+{{- end -}}

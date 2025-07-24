@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-components=(web api scheduler notifier)
+components=(web api scheduler notifier ai)
 COMPOSE_FILE="docker-compose/docker-compose.yml"
 VALUES_FILE="charts/reacheraven/values.yaml"
 CHART_FILE="charts/reacheraven/Chart.yaml"
