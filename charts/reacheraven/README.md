@@ -18,6 +18,8 @@ Common settings:
 
 - `reacheraven.web.ingress.host` – domain for the web dashboard
 - `reacheraven.api.ingress.host` – domain for the API service
+- `global.publicWebUrl` – external URL of the web dashboard
+- `global.publicApiUrl` – external URL of the API service
 - `reacheraven.dependencies.postgresql.connectionString` – PostgreSQL connection string
 - `reacheraven.dependencies.redis.connectionString` – Redis connection string
 - `reacheraven.dependencies.rabbitmq.connectionString` – RabbitMQ connection string

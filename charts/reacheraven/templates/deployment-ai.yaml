@@ -59,20 +59,50 @@ spec:
         - name: ai
           image: "{{ .Values.reacheraven.ai.image }}:{{ .Values.reacheraven.ai.tag }}"
           imagePullPolicy: {{ .Values.global.imagePullPolicy | default "Always" }}
+          ports:
+            - name: http
+              containerPort: 8083
           env:
             - name: TZ
               value: "{{ .Values.global.timezone | default "UTC" }}"
-            - name: RABBITMQ_URL
-              value: {{ .Values.reacheraven.ai.env.rabbitmqUrl | quote }}
             - name: AI_EVENTS_EXCHANGE
               value: {{ .Values.reacheraven.ai.env.aiEventsExchange | quote }}
             - name: QUESTION_ROUTING_KEY
               value: {{ .Values.reacheraven.ai.env.questionRoutingKey | quote }}
             - name: AI_QUEUE
               value: {{ .Values.reacheraven.ai.env.aiQueue | quote }}
-            - name: REDIS_URL
-              value: {{ .Values.reacheraven.ai.env.redisUrl | quote }}
+            - name: OLLAMA_BASE_URL
+              value: {{ .Values.reacheraven.ai.env.ollamaBaseUrl | quote }}
+            - name: OLLAMA_MODEL
+              value: {{ .Values.reacheraven.ai.env.ollamaModel | quote }}
+            - name: PORT
+              value: {{ .Values.reacheraven.ai.env.port | quote }}
           envFrom:
             - secretRef:
                 name: {{ include "reacheraven.fullname" . }}-credentials
+          readinessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            failureThreshold: 5
+        - name: ollama
+          image: "ollama/ollama:latest"
+          imagePullPolicy: {{ .Values.global.imagePullPolicy | default "IfNotPresent" }}
+          ports:
+            - containerPort: 11434
+          volumeMounts:
+            - name: ollama-data
+              mountPath: /root/.ollama
 {{- end -}}
+      volumes:
+        - name: ollama-data
+          emptyDir: {}

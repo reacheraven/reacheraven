@@ -42,6 +42,8 @@ spec:
             - name: REACHERAVEN_API_URL
             {{- if .Values.reacheraven.web.backend.host }}
               value: "{{ .Values.reacheraven.web.backend.host }}"
+            {{- else if .Values.global.publicApiUrl }}
+              value: "{{ .Values.global.publicApiUrl }}"
             {{- else }}
               value: "http://{{ include "reacheraven.fullname" . }}-api:8080"
             {{- end }}

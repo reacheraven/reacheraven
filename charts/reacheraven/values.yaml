@@ -33,6 +33,9 @@ global:
   imagePullPolicy: "IfNotPresent"
   # Default timezone for the application.
   timezone: "UTC"
+  # Public URLs used by services to generate external links
+  publicApiUrl: "http://reacheraven-api.example.com"
+  publicWebUrl: "http://reacheraven-web.example.com"
 #######################################
 # Reacheraven Application Configuration
 #######################################
@@ -210,11 +213,13 @@ reacheraven:
     service:
       type: ClusterIP
     env:
-      rabbitmqUrl: "amqp://user:changeme@reacheraven-rabbitmq-headless:5672/"
       aiEventsExchange: "ai_events"
       questionRoutingKey: "question.asked"
-      aiQueue: "ai_insights"
-      redisUrl: "redis://default:changeme@reacheraven-redis-headless:6379/0"
+      aiQueue: "ai_questions"
+      ollamaBaseUrl: "http://reacheraven-ollama:11434"
+      ollamaModel: "llama3.2:3b"
+      port: 8083
+      
   dependencies:
     # The dependencies section allows you to configure the subcharts for PostgreSQL,
     # Redis, and RabbitMQ. These are optional components that can be installed

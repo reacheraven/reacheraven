@@ -18,7 +18,54 @@ spec:
         app: {{ include "reacheraven.name" . }}
         component: api
     spec:
-      {{- /* afinidades / tolerations omitidas para brevidade */}}
+      affinity: 
+        {{- if .Values.global.affinity }}
+        {{- toYaml .Values.global.affinity | nindent 6 }}
+        {{- end }}
+      tolerations:
+        {{- if .Values.global.tolerations }}
+        {{- toYaml .Values.global.tolerations | nindent 6 }}
+        {{- end }}
+      nodeSelector:
+        {{- if .Values.global.nodeSelector }}
+        {{- toYaml .Values.global.nodeSelector | nindent 8 }}
+        {{- end }}
+      {{- if or (.Values.reacheraven.dependencies.postgresql.install) (.Values.reacheraven.dependencies.redis.install) (.Values.reacheraven.dependencies.rabbitmq.install) }}
+      initContainers:
+        - name: wait-for-postgres
+          image: busybox
+          command: ["sh", "-c"]
+          args:
+            - |
+              echo "Waiting for PostgreSQL at {{ include "reacheraven.fullname" . }}-postgresql-hl:5432..."
+              until nc -z {{ include "reacheraven.fullname" . }}-postgresql-hl 5432; do
+                echo "Sleeping for 2s..."
+                sleep 2
+              done
+              echo "PostgreSQL is up!"
+        - name: wait-for-redis
+          image: busybox
+          command: ["sh", "-c"]
+          args:
+            - |
+              echo "Waiting for Redis at {{ include "reacheraven.fullname" . }}-redis-headless:6379..."
+              until nc -z {{ include "reacheraven.fullname" . }}-redis-headless 6379; do
+                echo "Sleeping for 2s..."
+                sleep 2
+              done
+              echo "Redis is up!"
+        - name: wait-for-rabbitmq
+          image: curlimages/curl:latest
+          command: ["sh", "-c"]
+          args:
+            - |
+              echo "Waiting for RabbitMQ management API at {{ include "reacheraven.fullname" . }}-rabbitmq-headless:15672..."
+              until curl -fsSL http://{{ include "reacheraven.fullname" . }}-rabbitmq-headless:15672/api/version >/dev/null 2>&1; do
+                echo "Sleeping for 2s..."
+                sleep 2
+              done
+              echo "RabbitMQ management API is up!"
+      {{- end }}
       containers:
         - name: api
           image: "{{ .Values.reacheraven.api.image }}:{{ .Values.reacheraven.api.tag }}"
@@ -45,6 +92,10 @@ spec:
               value: {{ .Values.reacheraven.api.env.smtp.defaultEmail | quote }}
             - name: RABBITMQ_EXCHANGE
               value: {{ .Values.reacheraven.api.env.rabbitmqExchange | quote }}
+            - name: PUBLIC_API_URL
+              value: {{ .Values.global.publicApiUrl | quote }}
+            - name: PUBLIC_WEB_URL
+              value: {{ .Values.global.publicWebUrl | quote }}
           envFrom:
             - secretRef:
                 name: {{ include "reacheraven.fullname" . }}-credentials
