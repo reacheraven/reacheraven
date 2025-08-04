@@ -97,12 +97,28 @@ spec:
         - name: ollama
           image: "ollama/ollama:latest"
           imagePullPolicy: {{ .Values.global.imagePullPolicy | default "IfNotPresent" }}
+          command: ["/bin/bash", "-c"]
+          args:
+            - |
+              ollama serve & \
+              sleep 5 && \
+              ollama pull tinyllama:latest && \
+              ollama pull deepseek-r1:1.5b && \
+              wait
           ports:
             - containerPort: 11434
+          resources:
+            limits:
+              ephemeral-storage: 6Gi
+            requests:
+              ephemeral-storage: 6Gi
+{{- if .Values.reacheraven.ai.persistence.enabled }}
           volumeMounts:
             - name: ollama-data
               mountPath: /root/.ollama
-{{- end -}}
       volumes:
         - name: ollama-data
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: {{ include "reacheraven.name" . }}-ollama-data
+{{- end }}
+{{- end -}}

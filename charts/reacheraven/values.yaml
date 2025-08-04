@@ -44,7 +44,7 @@ reacheraven:
   web:
     enabled: true
     image: "reacheraven/reacheraven-web"
-    tag: "v1.0.53"
+    tag: "v1.0.59"
     replicas: 1 # Number of instances for the web frontend.
     service:
       type: ClusterIP # Service exposed internally within the cluster.
@@ -107,7 +107,7 @@ reacheraven:
   api:
     enabled: true
     image: "reacheraven/reacheraven-api"
-    tag: "v1.0.29"
+    tag: "v1.0.34"
     replicas: 2 # Number of instances for the API service.
     service:
       type: ClusterIP
@@ -175,7 +175,7 @@ reacheraven:
   scheduler:
     enabled: true
     image: "reacheraven/reacheraven-scheduler"
-    tag: "v1.0.5"
+    tag: "v1.0.6"
     replicas: 1 # Number of scheduler instances; typically one is sufficient.
     service:
       type: ClusterIP
@@ -187,7 +187,7 @@ reacheraven:
   notifier:
     enabled: true
     image: "reacheraven/reacheraven-notifier"
-    tag: "v1.0.5"
+    tag: "v1.0.6"
     replicas: 1 # Number of notifier instances.
     service:
       type: ClusterIP
@@ -208,18 +208,20 @@ reacheraven:
   ai:
     enabled: true
     image: "reacheraven/reacheraven-ai"
-    tag: "v1.0.0"
+    tag: "v1.2.21"
     replicas: 1
+    persistence:
+      enabled: false
+      size: 5Gi
     service:
       type: ClusterIP
     env:
       aiEventsExchange: "ai_events"
       questionRoutingKey: "question.asked"
       aiQueue: "ai_questions"
-      ollamaBaseUrl: "http://reacheraven-ollama:11434"
-      ollamaModel: "llama3.2:3b"
+      ollamaBaseUrl: "http://localhost:11434" # this used by sidecar
+      ollamaModel: "deepseek-r1:latest"
       port: 8083
-      
   dependencies:
     # The dependencies section allows you to configure the subcharts for PostgreSQL,
     # Redis, and RabbitMQ. These are optional components that can be installed

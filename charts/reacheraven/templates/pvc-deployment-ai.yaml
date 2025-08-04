@@ -1,0 +1,15 @@
+{{- if and .Values.reacheraven.ai.enabled .Values.reacheraven.ai.persistence.enabled -}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "reacheraven.name" . }}-ollama-data
+  labels:
+    app: {{ include "reacheraven.name" . }}
+    component: ai
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.reacheraven.ai.persistence.size | quote }}
+{{- end -}}

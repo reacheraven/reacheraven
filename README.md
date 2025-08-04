@@ -121,6 +121,10 @@ Check deployment status:
 ```bash
 helm status reacheraven
 ```
+### AI Service Sidecar
+
+The `reacheraven-ai` deployment includes an `ollama` sidecar that hosts the lightweight Llama model. The AI container communicates with the sidecar using `OLLAMA_BASE_URL=http://localhost:11434`. Ensure this environment variable is configured so generated insights can be returned to the web interface.
+
 
 ### Customizing the Installation
 
