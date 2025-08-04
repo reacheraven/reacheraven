@@ -220,8 +220,15 @@ reacheraven:
       questionRoutingKey: "question.asked"
       aiQueue: "ai_questions"
       ollamaBaseUrl: "http://localhost:11434" # this used by sidecar
-      ollamaModel: "deepseek-r1:latest"
+      ollamaModel: "deepseek-r1:1.5b-qwen-distill-q8_0" # default to 8-bit quantized model
       port: 8083
+    resources:
+      limits:
+        cpu: 500m
+        memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 512Mi
   dependencies:
     # The dependencies section allows you to configure the subcharts for PostgreSQL,
     # Redis, and RabbitMQ. These are optional components that can be installed

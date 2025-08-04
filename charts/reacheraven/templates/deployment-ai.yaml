@@ -59,6 +59,8 @@ spec:
         - name: ai
           image: "{{ .Values.reacheraven.ai.image }}:{{ .Values.reacheraven.ai.tag }}"
           imagePullPolicy: {{ .Values.global.imagePullPolicy | default "Always" }}
+          resources:
+            {{- toYaml .Values.reacheraven.ai.resources | nindent 12 }}
           ports:
             - name: http
               containerPort: 8083
@@ -103,7 +105,7 @@ spec:
               ollama serve & \
               sleep 5 && \
               ollama pull tinyllama:latest && \
-              ollama pull deepseek-r1:1.5b && \
+              ollama pull {{ .Values.reacheraven.ai.env.ollamaModel | quote }} && \
               wait
           ports:
             - containerPort: 11434
