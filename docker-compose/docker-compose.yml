@@ -12,7 +12,7 @@ services:
         condition: service_started
 
   api:
-    image: reacheraven/reacheraven-api:v1.0.34
+    image: reacheraven/reacheraven-api:v1.0.35
     container_name: reacheraven-api
     environment:
       - PORT=8080
@@ -28,7 +28,7 @@ services:
     restart: always
 
   scheduler:
-    image: reacheraven/reacheraven-scheduler:v1.0.6
+    image: reacheraven/reacheraven-scheduler:v1.0.7
     container_name: reacheraven-scheduler
     environment:
       - TZ=America/Sao_Paulo
@@ -94,7 +94,7 @@ services:
       retries: 5
       
   ai:
-    image: reacheraven/reacheraven-ai:v1.2.21
+    image: reacheraven/reacheraven-ai:v1.2.22
     container_name: reacheraven-ai
     environment:
       - OLLAMA_BASE_URL=http://ollama:11434

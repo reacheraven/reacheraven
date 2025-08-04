@@ -107,7 +107,7 @@ reacheraven:
   api:
     enabled: true
     image: "reacheraven/reacheraven-api"
-    tag: "v1.0.34"
+    tag: "v1.0.35"
     replicas: 2 # Number of instances for the API service.
     service:
       type: ClusterIP
@@ -175,7 +175,7 @@ reacheraven:
   scheduler:
     enabled: true
     image: "reacheraven/reacheraven-scheduler"
-    tag: "v1.0.6"
+    tag: "v1.0.7"
     replicas: 1 # Number of scheduler instances; typically one is sufficient.
     service:
       type: ClusterIP
@@ -208,7 +208,7 @@ reacheraven:
   ai:
     enabled: true
     image: "reacheraven/reacheraven-ai"
-    tag: "v1.2.21"
+    tag: "v1.2.22"
     replicas: 1
     persistence:
       enabled: false
